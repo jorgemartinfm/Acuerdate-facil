@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orange · Oferta Táctica Febrero 2026 · SoHo</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23f97316'/><text x='50' y='72' font-size='60' font-weight='bold' text-anchor='middle' fill='white'>O</text></svg>">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap');
+    * { font-family: 'DM Sans', sans-serif; }
+    ::-webkit-scrollbar { height: 4px; width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #f97316; border-radius: 10px; }
+    .nav-scroll::-webkit-scrollbar { height: 3px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.25s ease-out; }
+    @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+    .slide-down { animation: slideDown 0.3s ease-out; }
+    @media print { .no-print { display: none !important; } }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { orange: { 50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12' } }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-100">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const sections = [
+      { id: "prioridades", label: "Prioridades", icon: "🎯" },
+      { id: "netflix", label: "Netflix", icon: "🎬" },
+      { id: "tv", label: "TV y Deporte", icon: "📺" },
+      { id: "dispositivos", label: "Dispositivos", icon: "📱" },
+      { id: "promos", label: "Promociones", icon: "💰" },
+      { id: "lineas", label: "Líneas", icon: "📞" },
+      { id: "retencion", label: "Retención", icon: "🛡️" },
+      { id: "servicios", label: "Servicios", icon: "⚙️" },
+      { id: "resumen", label: "Tarifas", icon: "📋" },
+    ];
+
+    function Badge({ children, color = "orange" }) {
+      const colors = {
+        orange: "bg-orange-500 text-white",
+        green: "bg-green-600 text-white",
+        blue: "bg-blue-600 text-white",
+        red: "bg-red-600 text-white",
+        purple: "bg-purple-600 text-white",
+        yellow: "bg-yellow-400 text-gray-900",
+        gray: "bg-gray-500 text-white",
+      };
+      return (
+        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold ${colors[color] || colors.orange} mr-1 mb-1`}>
+          {children}
+        </span>
+      );
+    }
+
+    function Card({ title, children, highlight, defaultOpen = false }) {
+      const [open, setOpen] = useState(defaultOpen);
+      return (
+        <div className={`rounded-xl border-2 ${highlight ? "border-orange-300 shadow-lg shadow-orange-50" : "border-gray-200"} bg-white mb-3 overflow-hidden transition-shadow hover:shadow-md`}>
+          <button
+            onClick={() => setOpen(!open)}
+            className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-gray-50 transition-colors cursor-pointer"
+          >
+            <span className="font-bold text-gray-800 text-sm">{title}</span>
+            <span className={`transform transition-transform duration-200 text-orange-400 text-xs ${open ? "rotate-180" : ""}`}>▼</span>
+          </button>
+          {open && <div className="px-5 pb-5 text-sm text-gray-700 border-t border-gray-100 slide-down">{children}</div>}
+        </div>
+      );
+    }
+
+    function InfoRow({ label, value, badge }) {
+      return (
+        <div className="flex items-start py-2 border-b border-gray-50 last:border-0">
+          <span className="text-gray-400 text-xs w-36 flex-shrink-0 pt-0.5 uppercase tracking-wide font-semibold">{label}</span>
+          <span className="text-gray-800 text-sm font-medium flex-1">
+            {value} {badge && <Badge color={badge.color}>{badge.text}</Badge>}
+          </span>
+        </div>
+      );
+    }
+
+    function PriceTag({ price, period, promo }) {
+      return (
+        <div className="inline-flex flex-col items-center bg-gradient-to-b from-orange-50 to-orange-100 rounded-xl px-4 py-3 mr-2 mb-2 border border-orange-200">
+          <span className="text-3xl font-black text-orange-600 leading-none">{price}<span className="text-base">€</span></span>
+          <span className="text-xs text-gray-500 mt-0.5">{period}</span>
+          {promo && <span className="text-xs text-green-600 font-bold mt-0.5">{promo}</span>}
+        </div>
+      );
+    }
+
+    /* ==================== SECTIONS ==================== */
+
+    function Prioridades() {
+      return (
+        <div className="space-y-4 fade-in">
+          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl p-6 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500 rounded-full opacity-10 -translate-y-10 translate-x-10"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-400 rounded-full opacity-10 translate-y-8 -translate-x-8"></div>
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center font-black text-sm">O</div>
+                <span className="text-orange-400 font-bold text-xs uppercase tracking-widest">Oferta Táctica</span>
+              </div>
+              <h2 className="text-2xl font-black mb-1">Febrero 2026 — SoHo</h2>
+              <p className="text-gray-400 text-sm">Del 2 de febrero al 1 de marzo · Autónomos y Pequeñas Empresas</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {[
+              { n: "1", title: "Blindaje de Cartera", color: "orange", items: ["Contener movimientos tarifarios", "Foco VaP a 48 meses", "HBO Max de pago en Love"] },
+              { n: "2", title: "Desarrollo", color: "blue", items: ["Netflix en Love y Negocio", "Fibra 10Gbps (OSP)", "Puesto de Trabajo con portátiles"] },
+              { n: "3", title: "Netas", color: "green", items: ["Maximizar Xsell, multisede, LLAA", "Tarifa retención anti-Digi", "Anticipación fin de promo"] },
+            ].map((p) => (
+              <div key={p.n} className={`bg-white rounded-xl p-4 border-2 ${p.color==="orange"?"border-orange-300":p.color==="blue"?"border-blue-300":"border-green-300"} relative overflow-hidden`}>
+                <div className={`absolute top-2 right-3 text-5xl font-black ${p.color==="orange"?"text-orange-100":p.color==="blue"?"text-blue-100":"text-green-100"}`}>{p.n}</div>
+                <div className="relative">
+                  <h4 className={`font-bold text-sm mb-2 ${p.color==="orange"?"text-orange-700":p.color==="blue"?"text-blue-700":"text-green-700"}`}>{p.title}</h4>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    {p.items.map((it, i) => <li key={i} className="flex items-start gap-1"><span className="text-gray-300 mt-px">•</span>{it}</li>)}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <Card title="🆕 Novedades clave de Febrero vs. Enero" defaultOpen={true}>
+            <div className="space-y-2 mt-3">
+              {[
+                { badge: "NUEVO", color: "red", bg: "bg-red-50", text: "Samsung Galaxy S26 y Google Pixel 10A (25 feb) en Renove" },
+                { badge: "NUEVO", color: "red", bg: "bg-red-50", text: "Netflix disponible como beneficio o de pago desde el 16 de febrero" },
+                { badge: "NUEVO", color: "red", bg: "bg-red-50", text: "DAZN Motor (16 feb) y DAZN Baloncesto (19 feb)" },
+                { badge: "NUEVO", color: "red", bg: "bg-red-50", text: "Tarifa Love Empresa Inicial anti-Digi desde 40€ (23 feb)" },
+                { badge: "NUEVO", color: "red", bg: "bg-red-50", text: "Wi-Fi 7 Premium desde 2,48€/mes (16 feb)" },
+                { badge: "CAMBIO", color: "yellow", bg: "bg-yellow-50", text: "LLAA Love pasan de 4,13€ a 8,22€ para siempre (máx 3)" },
+                { badge: "CAMBIO", color: "yellow", bg: "bg-yellow-50", text: "Promo sin VaP pasa de 15%/10% x24m → 10% x12m" },
+                { badge: "MANTIENE", color: "blue", bg: "bg-blue-50", text: "Capta 20% x24m con VAP · Xsell 30% x24m · Multisede 600Mb 13€ para siempre" },
+              ].map((item, i) => (
+                <div key={i} className={`flex items-start gap-2 p-2.5 ${item.bg} rounded-lg`}>
+                  <Badge color={item.color}>{item.badge}</Badge>
+                  <span className="text-sm text-gray-700">{item.text}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    function Netflix() {
+      return (
+        <div className="space-y-3 fade-in">
+          <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-5 text-white flex items-center gap-5 mb-2 relative overflow-hidden">
+            <div className="absolute inset-0 bg-red-600 opacity-5"></div>
+            <div className="text-5xl font-black text-red-600 relative">N</div>
+            <div className="relative">
+              <h3 className="text-lg font-bold">Netflix llega a Orange Empresas</h3>
+              <p className="text-gray-400 text-sm">Disponible a partir del 16 de febrero con las tarifas SoHo</p>
+            </div>
+          </div>
+
+          <Card title="📋 Condiciones Generales" defaultOpen={true}>
+            <div className="mt-2 space-y-1">
+              <InfoRow label="Disponible" value="Desde el 16 de febrero" badge={{ text: "NUEVO", color: "red" }} />
+              <InfoRow label="Compatible con" value="Todas las tarifas Negocio y Love Empresa" />
+              <InfoRow label="Uso" value="Solo para uso privado" />
+              <InfoRow label="Plan base" value="Estándar con anuncios (2 dispositivos simultáneos)" />
+              <InfoRow label="Elegible como" value="Beneficio gratuito o de pago según tarifa" />
+            </div>
+            <div className="mt-4 p-4 bg-gray-50 rounded-xl">
+              <p className="text-xs font-bold mb-3 uppercase tracking-wide text-gray-500">Opciones de Upsell</p>
+              <div className="flex gap-3">
+                <div className="bg-white rounded-lg p-3 text-center border-2 border-gray-200 flex-1">
+                  <div className="text-sm font-bold">Plan Estándar</div>
+                  <div className="text-xs text-gray-500">Sin anuncios</div>
+                  <div className="text-orange-600 font-black text-xl mt-1">+7€<span className="text-xs font-normal">/mes</span></div>
+                </div>
+                <div className="bg-white rounded-lg p-3 text-center border-2 border-gray-200 flex-1">
+                  <div className="text-sm font-bold">Plan Premium</div>
+                  <div className="text-xs text-gray-500">Sin anuncios · 4 disp.</div>
+                  <div className="text-orange-600 font-black text-xl mt-1">+13€<span className="text-xs font-normal">/mes</span></div>
+                </div>
+              </div>
+              <p className="text-xs text-gray-400 mt-2 text-center">Precios IVA incluido · Posibilidad de cambiar de plan</p>
+            </div>
+          </Card>
+
+          <Card title="🏢 Tarifas Negocio Extra — 1 plataforma sin coste">
+            <div className="mt-2 grid grid-cols-3 gap-2 mb-3">
+              {["Netflix", "Amazon Prime", "Disney+"].map((p) => (
+                <div key={p} className="bg-gray-50 rounded-xl p-3 text-center border-2 border-gray-200 hover:border-orange-300 transition-colors">
+                  <div className="font-bold text-sm">{p}</div>
+                  <div className="text-xs text-gray-400">Con anuncios</div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500">Para Negocio Extra 1, 3 y 5 líneas. Cambio cada 3 meses.</p>
+          </Card>
+
+          <Card title="❤️ Tarifas Love Empresa — Netflix como beneficio">
+            <div className="mt-2 p-3 bg-orange-50 rounded-xl border border-orange-200">
+              <p className="text-sm mb-2 font-semibold">TV + 90 Canales con Netflix como beneficio sin coste</p>
+              <p className="text-xs text-gray-600">Love Empresa Impulsa 1, Impulsa 3, Crece 5/10/20</p>
+              <p className="text-xs text-gray-600 mt-1">Máx 1 beneficio sin coste. Upsell a Estándar (+7€) o Premium (+13€)</p>
+              <p className="text-xs font-bold mt-2 text-orange-700">⚡ Clientes Love: Disponible el 09/02</p>
+            </div>
+          </Card>
+
+          <Card title="💬 Argumentario de venta">
+            <div className="mt-2 space-y-3">
+              <div className="p-3 bg-green-50 rounded-xl border border-green-200">
+                <p className="text-xs font-bold text-green-700 mb-2">¿Qué ventajas tiene contratar Netflix con Orange?</p>
+                <ul className="text-xs text-gray-600 space-y-1">
+                  <li>✅ Más contenido: incluye TV + 90 canales</li>
+                  <li>✅ Disponible como beneficio sin coste según tarifa</li>
+                  <li>✅ Todo unificado en una misma factura</li>
+                </ul>
+              </div>
+              <div className="p-3 bg-blue-50 rounded-xl border border-blue-200">
+                <p className="text-xs font-bold text-blue-700 mb-2">¿A quién ofrecer Netflix?</p>
+                <ul className="text-xs text-gray-600 space-y-1">
+                  <li>🎯 Clientes que ya tengan Netflix por fuera</li>
+                  <li>🎯 Como servicio con coste si ya tienen otro beneficio</li>
+                  <li>🎯 Como beneficio sin coste si la cualificación lo recomienda</li>
+                  <li>🎯 Clientes con Premium o sin anuncios: destacar precio reducido del upsell</li>
+                </ul>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="🎭 Pack Entretenimiento de pago — Precios IVA incluido">
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead><tr className="bg-gray-100"><th className="text-left p-2.5 rounded-tl-lg">Plataforma</th><th className="text-right p-2.5">Con anuncios</th><th className="text-right p-2.5">Estándar</th><th className="text-right p-2.5 rounded-tr-lg">Premium</th></tr></thead>
+                <tbody>
+                  {[["Netflix","6,99€","13,99€","19,99€"],["Prime Video","4,99€","+1,99€","—"],["Disney+","6,99€","10,99€","15,99€"],["HBO Max","6,99€","10,99€","15,99€"],["SkyShowtime","7,99€","3,99€ x3m","—"]].map(([n,a,s,p],i) => (
+                    <tr key={i} className="border-b border-gray-100 hover:bg-gray-50"><td className="p-2.5 font-semibold">{n}</td><td className="p-2.5 text-right">{a}</td><td className="p-2.5 text-right">{s}</td><td className="p-2.5 text-right">{p}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="text-xs text-gray-400 mt-2">*TV Libre no compatible con Packs de Fútbol</p>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    function TVDeporte() {
+      return (
+        <div className="space-y-3 fade-in">
+          <Card title="🏎️ DAZN Motor — Desde el 16 de febrero" defaultOpen={true} highlight>
+            <div className="mt-3">
+              <p className="text-sm mb-3">Formula 1®, WorldSBK, MotoGP™ y temporada Nascar</p>
+              <div className="flex items-end gap-4 mb-3 flex-wrap">
+                <PriceTag price="16,52" period="s/IVA normal" />
+                <span className="text-2xl text-gray-300 mb-3">→</span>
+                <PriceTag price="12,39" period="s/IVA promo 12m" promo="Ahorra 4,13€/mes" />
+              </div>
+              <p className="text-xs text-gray-500">Incluye TV 90 Canales + DAZN Motor</p>
+              <div className="mt-2 p-2 bg-gray-50 rounded-lg text-xs">
+                <strong>Compatible:</strong> Love Smart/Activa/Impulsa/Crece | Negocio Base/Plus/Extra 1-20
+              </div>
+            </div>
+          </Card>
+
+          <Card title="🏀 DAZN Baloncesto — Desde el 19 de febrero" highlight>
+            <div className="mt-3">
+              <p className="text-sm mb-3">Copa del Rey Valencia (19-22 feb) y ACB</p>
+              <PriceTag price="8,22" period="€/mes s/IVA" />
+              <div className="mt-3 p-2.5 bg-yellow-50 rounded-lg text-xs border border-yellow-200">
+                <strong>⚠️ Requisito:</strong> Tener TV 90 Canales activo (excepto Baloncesto standalone)
+              </div>
+              <div className="mt-1.5 p-2 bg-gray-50 rounded-lg text-xs">
+                ✅ Compatible con DAZN Motor · ❌ Incompatible con Fútbol/Fútbol+Deportes (ya incluye Baloncesto)
+              </div>
+            </div>
+          </Card>
+
+          <Card title="⚽ Packs de Fútbol — Precios actualizados">
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead><tr className="bg-gray-100"><th className="p-2.5 text-left rounded-tl-lg">Pack</th><th className="p-2.5 text-right">Impulsa/Crece/NE</th><th className="p-2.5 text-right">Inicial/Activa/NB</th><th className="p-2.5 text-right rounded-tr-lg">Multisede 600Mb</th></tr></thead>
+                <tbody>
+                  <tr className="border-b"><td className="p-2.5 font-semibold">TV 90c + Fútbol</td><td className="p-2.5 text-right">29-31€</td><td className="p-2.5 text-right">33€</td><td className="p-2.5 text-right">38,7€</td></tr>
+                  <tr><td className="p-2.5 font-semibold">TV 90c + Fútbol + Deporte</td><td className="p-2.5 text-right">35€</td><td className="p-2.5 text-right">44,05€</td><td className="p-2.5 text-right">50€</td></tr>
+                </tbody>
+              </table>
+              <p className="text-xs text-orange-600 mt-2 font-bold">⚠️ +2€/mes desde 15/01 para clientes de cartera (comunicados)</p>
+            </div>
+          </Card>
+
+          <Card title="🍺 TV Bares — Lo más relevante en febrero">
+            <div className="mt-2 text-sm">
+              <p>LaLiga, playoffs Champions, Premier League, Serie A, Bundesliga, inicio MotoGP™ y JJ.OO. de Invierno en Eurosport.</p>
+              <p className="mt-2 text-xs text-gray-500">Super Bowl (NFL) en abierto por Mediaset.</p>
+              <div className="mt-2 p-2.5 bg-orange-50 rounded-lg text-xs border border-orange-200">
+                <strong>TV Bares Para Todos:</strong> 50% x12m en Fibra Pro 1Gb al contratar TB Bares para Todos
+              </div>
+            </div>
+          </Card>
+
+          <Card title="📺 Orange TV Libre — 50% durante 3 meses">
+            <div className="mt-2 text-sm">
+              <p>Contratable en todas las tarifas, sin dependencia de 90 Canales.</p>
+              <p className="text-xs text-red-600 mt-1 font-semibold">⚠️ Cerrada la contratación de TV Libre con TV 90 Canales o Pack Entretenimiento.</p>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    function Dispositivos() {
+      const novedades = [
+        { nombre: "TCL NXTPAPER 70 PRO 512GB 5G", precio: "2,60€ x48" },
+        { nombre: "VIVO Y31 512GB 5G", precio: "2,40€ x48" },
+        { nombre: "LENOVO V15 i3 15,6\" 8+256GB", precio: "7,10€ x48" },
+        { nombre: "LENOVO THINKBOOK ULTRA i5 14\" 16+512GB", precio: "13,90€ x48" },
+        { nombre: "LENOVO THINKPAD X ULTRA i7 14\" 32GB+1TB", precio: "33,65€ x48" },
+        { nombre: "MOTO WATCH ESPECIAL EDITION", precio: "1,90€ x48" },
+      ];
+
+      const renove = [
+        { gama: "Top", color: "orange", dispositivos: [{ nombre: "HONOR MAGIC8 PRO 512GB", precio: "17,03€" }, { nombre: "OPPO FIND X9 512GB", precio: "13,51€" }] },
+        { gama: "Premium", color: "blue", dispositivos: [{ nombre: "IPHONE 16e 128GB", precio: "7,85€" }, { nombre: "MOTOROLA EDGE 70 512GB", precio: "6,90€" }] },
+        { gama: "Flagship", color: "purple", dispositivos: [{ nombre: "IPHONE 17 PRO MAX 256GB", precio: "23,10€" }, { nombre: "SAMSUNG GALAXY S25 ULTRA 512GB", precio: "17,30€" }] },
+        { gama: "Tablets", color: "green", dispositivos: [{ nombre: "XIAOMI PAD7 11\" WiFi + teclado", precio: "4,46€" }, { nombre: "SAMSUNG TAB S10 FE 5G", precio: "6,20€" }] },
+      ];
+
+      return (
+        <div className="space-y-3 fade-in">
+          <Card title="🆕 Novedades del mes" defaultOpen={true} highlight>
+            <div className="mt-2 space-y-1.5">
+              {novedades.map((d, i) => (
+                <div key={i} className="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg hover:bg-orange-50 transition-colors">
+                  <span className="text-sm">{d.nombre}</span>
+                  <span className="font-black text-orange-600 whitespace-nowrap ml-3 text-sm">{d.precio}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-400 mt-2">Precios Renove con LE Impulsa 3 y Máx. Riesgo Plus. Portátiles con dto -1,25€ x48m incluido.</p>
+          </Card>
+
+          <Card title="🔄 Renove — Por gama">
+            <div className="mt-2 space-y-3">
+              {renove.map((g) => (
+                <div key={g.gama}>
+                  <Badge color={g.color}>{g.gama}</Badge>
+                  <div className="mt-1 space-y-1">
+                    {g.dispositivos.map((d, i) => (
+                      <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg text-sm">
+                        <span>{d.nombre}</span>
+                        <span className="font-bold text-orange-600 whitespace-nowrap ml-2">{d.precio}/mes x48</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 p-2.5 bg-yellow-50 rounded-lg text-xs border border-yellow-200">
+              <strong>💡 Recuerda:</strong> Ofrecer siempre Seguro Móvil con el renove
+            </div>
+          </Card>
+
+          <Card title="💻 Pack Puesto de Trabajo — Portátil + Monitor + Impresora">
+            <div className="mt-2 space-y-3">
+              {[
+                { name: "Pack Lenovo Ideapad 3", price: "8,96€", desc: "Ideapad 3 i3 + Monitor 27\" + HP Deskjet 2920", save: "234€" },
+                { name: "Pack Samsung Book4 i3", price: "13,98€", desc: "Book4 i3 + Samsung Monitor + HP Smart Tank 5105", save: "291€" },
+              ].map((pk, i) => (
+                <div key={i} className="p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border border-green-200">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-bold text-sm">{pk.name}</span>
+                    <span className="text-xl font-black text-green-700">{pk.price}<span className="text-xs font-normal">/48m</span></span>
+                  </div>
+                  <p className="text-xs text-gray-600">{pk.desc} · <strong className="text-green-700">Ahorra {pk.save}</strong></p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 p-2 bg-blue-50 rounded-lg text-xs border border-blue-200">
+              <strong>Dto portátil:</strong> -1,25€ x48m o -2,5€ x24m · Solo 1 por cliente · Compatible con resto de descuentos
+            </div>
+          </Card>
+
+          <Card title="🔒 Seguro Móvil — Nuevos tramos">
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead><tr className="bg-gray-100"><th className="p-2 text-left rounded-tl-lg">Tipo</th><th className="p-2 text-right">&lt;100€</th><th className="p-2 text-right">100-250</th><th className="p-2 text-right">251-450</th><th className="p-2 text-right">451-750</th><th className="p-2 text-right">751-1100</th><th className="p-2 text-right">1101-1750</th><th className="p-2 text-right rounded-tr-lg">&gt;1750€</th></tr></thead>
+                <tbody>
+                  <tr className="border-b"><td className="p-2 font-semibold">Global</td><td className="p-2 text-right">1,5€</td><td className="p-2 text-right">4€</td><td className="p-2 text-right">6€</td><td className="p-2 text-right">10,5€</td><td className="p-2 text-right">13,5€</td><td className="p-2 text-right">15,5€</td><td className="p-2 text-right">17,5€</td></tr>
+                  <tr className="border-b"><td className="p-2 font-semibold">Pantalla</td><td className="p-2 text-right">1€</td><td className="p-2 text-right">3€</td><td className="p-2 text-right">4,5€</td><td className="p-2 text-right">5,5€</td><td className="p-2 text-right">8€</td><td className="p-2 text-right">10€</td><td className="p-2 text-right">12€</td></tr>
+                  <tr><td className="p-2 font-semibold">Multimedia</td><td className="p-2 text-right">1€</td><td className="p-2 text-right">2,5€</td><td className="p-2 text-right">4€</td><td className="p-2 text-right">6€</td><td className="p-2 text-right">8€</td><td className="p-2 text-right">10€</td><td className="p-2 text-right">12€</td></tr>
+                </tbody>
+              </table>
+              <p className="text-xs text-gray-400 mt-2">Solo NUEVAS altas de seguro. Clientes actuales sin cambios.</p>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    function Promociones() {
+      const promoTable = (data, headerColor) => (
+        <table className="w-full text-xs">
+          <thead><tr className={headerColor}><th className="p-2.5 text-left rounded-tl-lg">Tarifa</th><th className="p-2.5 text-right">PVP</th><th className="p-2.5 text-right rounded-tr-lg font-bold">Con promo</th></tr></thead>
+          <tbody>
+            {data.map(([t,p,d],i) => (
+              <tr key={i} className="border-b border-gray-100 hover:bg-gray-50"><td className="p-2.5">{t}</td><td className="p-2.5 text-right text-gray-400">{p}</td><td className="p-2.5 text-right font-bold text-orange-600">{d}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      );
+
+      return (
+        <div className="space-y-3 fade-in">
+          <Card title="✅ Captación 20% x24m con VAP — Se mantiene" defaultOpen={true}>
+            <div className="mt-2 overflow-x-auto">
+              {promoTable([["Negocio Base Plus","52€","41,6€"],["Negocio Extra 1","63€","50,4€"],["Negocio Extra 3","91€","72,8€"],["Negocio Extra 5","122€","97,6€"],["Negocio Extra 10","238€","190,4€"],["Negocio Extra 20","378€","302,4€"]], "bg-orange-100")}
+              <p className="text-xs text-gray-500 mt-2">Pack doble captación todos los operadores excepto Movistar. Dto en todo el pack si VaP en línea principal.</p>
+            </div>
+          </Card>
+
+          <Card title="🆕 Sin VAP — Ahora 10% x12m" highlight>
+            <div className="mt-2 overflow-x-auto">
+              {promoTable([["Negocio Base Plus","52€","46,8€"],["Negocio Extra 1","63€","56,7€"],["Negocio Extra 3","91€","81,9€"],["Negocio Extra 5","122€","109,8€"],["Negocio Extra 10","238€","214,2€"],["Negocio Extra 20","378€","340,2€"]], "bg-yellow-100")}
+              <p className="text-xs text-red-600 mt-2 font-bold">⚠️ Antes 15%/10% x24m → ahora 10% x12m</p>
+            </div>
+          </Card>
+
+          <Card title="✅ Xsell 30% x24m — Se mantiene">
+            <div className="mt-2 overflow-x-auto">
+              {promoTable([["Negocio Base Plus","52€","36,4€"],["Negocio Extra 1","63€","44,1€"],["Negocio Extra 3","91€","63,7€"],["Negocio Extra 5","122€","85,4€"],["Negocio Extra 10","238€","166,6€"],["Negocio Extra 20","378€","264,6€"]], "bg-green-100")}
+            </div>
+          </Card>
+
+          <Card title="📄 Factura Electrónica — 100% dto x3m">
+            <p className="mt-2 text-sm">Altas de Pack Negocio + Factura Electrónica: <strong className="text-green-600">100% descuento durante 3 meses</strong>.</p>
+            <p className="text-xs text-gray-400 mt-1">No disponible para portfolio Love Empresa.</p>
+          </Card>
+
+          <Card title="⚽ Fútbol Gratis — Retención y Fidelización">
+            <div className="mt-2 space-y-2">
+              <div className="p-3 bg-red-50 rounded-xl text-xs border border-red-200">
+                <strong className="text-red-700">Alto Riesgo (Rojo/Amarillo) — PROACTIVO:</strong>
+                <p className="mt-1">Ofrecer siempre que el cliente tenga interés. 3 meses gratis (después 31-35€/mes).</p>
+              </div>
+              <div className="p-3 bg-blue-50 rounded-xl text-xs border border-blue-200">
+                <strong className="text-blue-700">Bajo Riesgo (Azul/Verde) — REACTIVO:</strong>
+                <p className="mt-1">Solo si el cliente especifica que quiere la promo BTL/TV. 3 meses gratis.</p>
+              </div>
+              <p className="text-xs text-gray-400">Compatible con cualquier otra política de fidelización/retención.</p>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    function Lineas() {
+      return (
+        <div className="space-y-3 fade-in">
+          <Card title="📞 LLAA Love Empresa — ⚠️ Cambio importante" defaultOpen={true} highlight>
+            <div className="mt-3">
+              <div className="flex items-center gap-4 mb-3 justify-center">
+                <div className="text-center p-3 bg-gray-100 rounded-xl">
+                  <span className="text-2xl font-black text-gray-300 line-through">4,13€</span>
+                  <span className="text-xs text-gray-400 block">antes</span>
+                </div>
+                <span className="text-2xl text-gray-300">→</span>
+                <div className="text-center p-3 bg-orange-100 rounded-xl border-2 border-orange-300">
+                  <span className="text-2xl font-black text-orange-600">8,22€</span>
+                  <span className="text-xs text-orange-700 block font-bold">PARA SIEMPRE</span>
+                </div>
+              </div>
+              <p className="text-sm text-center">Con Packs Cartera Portfolio Love (límite 3 líneas)</p>
+              <div className="mt-3 p-2.5 bg-gray-50 rounded-lg text-xs text-center">
+                Superado el máximo: Activa/Impulsa 1 → <strong>15€</strong> | Impulsa 3/Crece 5 → <strong>13€</strong> | Crece 10/20 → <strong>11€</strong>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="📞 LLAA Negocio — Captación y Cartera">
+            <div className="mt-2">
+              <PriceTag price="8,22" period="€/mes x24m" promo="Límite 3 líneas" />
+              <div className="mt-2 p-2.5 bg-gray-50 rounded-lg text-xs">
+                Superado el máximo: Base Plus/NE 1 → <strong>15€</strong> | NE 3/NE 5 → <strong>13€</strong> | NE 10/20 → <strong>11€</strong>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="🏢 Multisede — Líneas Fijas Adicionales">
+            <div className="mt-2 space-y-2">
+              <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border-2 border-green-300">
+                <div className="flex justify-between items-center">
+                  <div><strong className="text-base">Fibra 600 Mbps</strong><br/><span className="text-xs text-gray-500">Sin límite de sedes</span></div>
+                  <div className="text-right"><span className="text-3xl font-black text-green-700">13€</span><br/><Badge color="green">PARA SIEMPRE</Badge></div>
+                </div>
+              </div>
+              <div className="p-4 bg-blue-50 rounded-xl border-2 border-blue-200">
+                <div className="flex justify-between items-center">
+                  <div><strong className="text-base">Fibra 1 Gbps</strong><br/><span className="text-xs text-gray-500">Sin límite de sedes</span></div>
+                  <div className="text-right"><span className="text-3xl font-black text-blue-700">15€</span><br/><span className="text-xs text-gray-500">x12m (después 27,5€)</span></div>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="📞 Centralita Negocio — Dto 20€ x24m">
+            <div className="mt-2">
+              <p className="text-sm font-semibold mb-3">¡Hasta 480€ de ahorro! -20€/mes x24m al contratar Centralita.</p>
+              <div className="grid grid-cols-3 gap-2">
+                {[["Todo incluido","14€","Cisco · IP fija"],["Inalámbrica","7€","IP fija"],["Mejor precio","5€","IP fija · Básico"]].map(([n,p,d],i) => (
+                  <div key={i} className="bg-gray-50 rounded-xl p-3 text-center border">
+                    <p className="font-bold text-sm">{n}</p>
+                    <p className="text-orange-600 font-black text-lg">{p}<span className="text-xs font-normal">/mes</span></p>
+                    <p className="text-gray-400 text-xs">{d}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-400 mt-2">Adicional a promo del pack. Base Plus a NE5 (Negocio) y Love Activa a Crece 5.</p>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    function Retencion() {
+      return (
+        <div className="space-y-3 fade-in">
+          <Card title="🆕 Tarifa Love Empresa Inicial — Anti Digi (23 feb)" defaultOpen={true} highlight>
+            <div className="mt-3">
+              <p className="text-sm mb-3">Nueva tarifa de retención frente a Digi para clientes de 2 a 5 líneas.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="p-4 bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-300 rounded-xl">
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-bold text-orange-700">Love Empresa Inicial</h4>
+                    <span className="text-2xl font-black text-orange-600">40€</span>
+                  </div>
+                  <ul className="text-xs space-y-1.5">
+                    <li>📶 Fibra 1GB</li>
+                    <li>📱 2 líneas ∞ GB + llamadas ilimitadas</li>
+                    <li>🔒 Ciberprotección Red Móvil</li>
+                    <li>📺 TV 90 canales + Netflix</li>
+                  </ul>
+                  <div className="mt-3 p-2 bg-white rounded-lg text-xs text-center">
+                    LLAA: <strong className="text-orange-600">5€/mes</strong> (100GB 5G+, máx 3)
+                  </div>
+                </div>
+                <div className="p-4 bg-gray-50 border-2 border-gray-200 rounded-xl">
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-bold text-gray-700">Love Empresa Inicial</h4>
+                    <span className="text-2xl font-black text-gray-600">42€</span>
+                  </div>
+                  <ul className="text-xs space-y-1.5">
+                    <li>📶 Fibra 600 Mbps</li>
+                    <li>📱 1 línea Móvil</li>
+                    <li>📞 Llamadas ilimitadas (sin internac.)</li>
+                    <li>📊 100GB 5G+ (después 2 Mbps)</li>
+                  </ul>
+                  <div className="mt-3 p-2 bg-white rounded-lg text-xs text-center">
+                    LLAA: <strong>11€/mes</strong> (100GB 5G+, máx 3)
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="📊 Políticas de Fin de Promo" defaultOpen>
+            <div className="mt-2 text-sm">
+              <p className="mb-2">Fin de promo origen 15%-50%. Aplica a <strong>MORADOS, ROJOS y AMARILLOS</strong> con cuotas VAP ≥12 meses.</p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead><tr className="bg-gray-100"><th className="p-2 text-left rounded-tl-lg">Tarifa</th><th className="p-2 text-center">Origen 15%</th><th className="p-2 text-center">Origen 20%</th><th className="p-2 text-center rounded-tr-lg">Origen 30%</th></tr></thead>
+                  <tbody>
+                    <tr className="bg-red-50 border-b"><td className="p-2 font-bold" colSpan={4}>CAPTA</td></tr>
+                    <tr className="border-b"><td className="p-2">Go/Flex/Extra, Love Empresa</td><td className="p-2 text-center">10%/10%</td><td className="p-2 text-center">10%/10%</td><td className="p-2 text-center">20%/20%</td></tr>
+                    <tr className="bg-blue-50 border-b"><td className="p-2 font-bold" colSpan={4}>CARTERA</td></tr>
+                    <tr><td className="p-2">Go/Flex/Extra, Love Empresa</td><td className="p-2 text-center">10%</td><td className="p-2 text-center">20%</td><td className="p-2 text-center">30-40%</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="🎯 Políticas de Fidelización por nivel de riesgo">
+            <div className="mt-2 space-y-2">
+              {[
+                { color: "purple", border: "border-purple-400", bg: "bg-purple-50", label: "MORADO", desc: "Love: 20% x12/24m o 30% x12/24m — SIEMPRE doble política. Love y Go: 20% o 30% x12m" },
+                { color: "red", border: "border-red-400", bg: "bg-red-50", label: "ROJO", desc: "Love: 20% x24m (también x12m, a elegir). Love y Go: 20% x12m" },
+                { color: "yellow", border: "border-yellow-400", bg: "bg-yellow-50", label: "AMARILLO", desc: "Love y Go: 10% x12m" },
+                { color: "blue", border: "border-blue-400", bg: "bg-blue-50", label: "AZUL / VERDE", desc: "1) Renove VaP con CP → 2) Beneficios digitales → 3) Dtos según cualificación" },
+              ].map((p, i) => (
+                <div key={i} className={`p-3 ${p.bg} rounded-xl border-l-4 ${p.border}`}>
+                  <Badge color={p.color}>{p.label}</Badge>
+                  <p className="text-xs mt-1">{p.desc}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card title="🔔 Cualificaciones Netflix y Beneficios (desde 16 feb)">
+            <div className="mt-2 space-y-1.5 text-xs">
+              <div className="p-2.5 bg-red-50 rounded-lg border border-red-200">
+                <strong>Piloto Netflix (5K clientes):</strong> Rojos/Amarillos con LEI1 a LEC20 y NE 1-20, sin beneficio ni fútbol → <Badge color="red">FOMENTA TV 90 + NETFLIX</Badge>
+              </div>
+              <div className="p-2.5 bg-gray-50 rounded-lg">
+                <strong>Sin beneficio, MORADO/ROJO/AMARILLO:</strong><br/>
+                · Hasta LE Impulsa 3 o NE3 → <Badge color="red">TV 90 + NETFLIX</Badge><br/>
+                · LE Crece 5-20 → <Badge color="blue">BENEFICIO M365 GRATIS</Badge><br/>
+                · NE 5L-20L → <Badge color="blue">M365 AL 50%</Badge>
+              </div>
+              <div className="p-2.5 bg-gray-50 rounded-lg">
+                <strong>Sin beneficio, AZULES:</strong> misma lógica
+              </div>
+              <div className="p-2.5 bg-orange-50 rounded-lg border border-orange-200">
+                <strong>CON beneficio contratado:</strong> <Badge color="orange">FOMENTA BENEFICIO PAGO M365</Badge>
+              </div>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    function Servicios() {
+      return (
+        <div className="space-y-3 fade-in">
+          <Card title="📶 Wi-Fi 7 Premium — Nuevo desde 16 feb" defaultOpen={true} highlight>
+            <div className="mt-3">
+              <PriceTag price="2,48" period="€/mes (sin IVA)" />
+              <ul className="text-sm space-y-1.5 mt-3">
+                <li>✅ Mejora conexión en cualquier rincón de oficina/hogar</li>
+                <li>✅ Servicio Experto 24h</li>
+                <li>✅ Sustitución gratuita en avería</li>
+                <li>✅ Protocolo EasyMesh, dualband (2,4+5 GHz), conexión simultánea MLO</li>
+              </ul>
+              <div className="mt-3 p-2.5 bg-gray-50 rounded-lg text-xs">
+                Compatible con Livebox 7 · Modelo cesión · Nuevos y cartera (convergencia y stand alone)
+              </div>
+            </div>
+          </Card>
+
+          <Card title="🚀 Fibra Simétrica 10Gbps">
+            <div className="mt-2">
+              <PriceTag price="8,26" period="€/mes (sin IVA)" />
+              <p className="text-sm mt-2">Router Livebox ZTE con Wi-Fi 6 en promoción.</p>
+              <div className="mt-2 p-2.5 bg-orange-50 rounded-lg text-xs border border-orange-200">
+                <strong>Campaña saliente 6K heavy users:</strong> ≥8 dispositivos o &gt;800GB/mes
+              </div>
+              <div className="mt-1.5 p-2 bg-gray-50 rounded-lg text-xs">
+                Compatible: Love Impulsa/Crece, Centralita Love, NE 1/3/5/10/20
+              </div>
+            </div>
+          </Card>
+
+          <Card title="🔐 Seguridad y Network+">
+            <div className="mt-2 space-y-2">
+              <div className="flex justify-between items-center p-2.5 bg-gray-50 rounded-lg">
+                <span className="text-sm font-semibold">Seguridad Avanzada Network+</span>
+                <span className="text-sm"><Badge color="green">1 mes gratis</Badge> después 15€/mes</span>
+              </div>
+              <div className="flex justify-between items-center p-2.5 bg-gray-50 rounded-lg">
+                <span className="text-sm font-semibold">IPs fijas</span>
+                <span className="text-sm font-bold text-orange-600">desde 12€/mes</span>
+              </div>
+              <div className="flex justify-between items-center p-2.5 bg-gray-50 rounded-lg">
+                <span className="text-sm font-semibold">SuperLAN</span>
+                <span className="text-sm font-bold text-orange-600">20€/mes x sede</span>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="🏠 Fibra Oro · 👵 Mayores Cuidados">
+            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="p-3 bg-gray-50 rounded-xl border">
+                <p className="font-bold text-sm mb-1">Fibra Oro — Backup 4G</p>
+                <PriceTag price="5" period="€/mes" />
+                <p className="text-xs text-gray-500 mt-1">Promo Soporte Técnico: SINCRONISMO</p>
+              </div>
+              <div className="p-3 bg-gray-50 rounded-xl border">
+                <p className="font-bold text-sm mb-1">Mayores Cuidados</p>
+                <PriceTag price="20" period="€/mes x24m" />
+                <p className="text-xs text-gray-500 mt-1">Reloj con detección caídas + SOS 24h</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="💼 Beneficios Elegibles — Servicios Digitales">
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {[
+                { name: "Microsoft 365", prices: ["5,6€ básico", "11,7€ estándar"], note: "Negocio: 50% dto" },
+                { name: "Presencia Digital", prices: ["10€/mes"], note: "Negocio: 50% dto" },
+                { name: "Factura Electrónica", prices: ["12€/mes"], note: "Negocio: 50% dto" },
+              ].map((b, i) => (
+                <div key={i} className="p-3 bg-gray-50 rounded-xl text-center border hover:border-orange-300 transition-colors">
+                  <div className="font-bold text-sm mb-1">{b.name}</div>
+                  {b.prices.map((p, j) => <div key={j} className="text-xs text-gray-500">{p}</div>)}
+                  <div className="text-xs text-green-600 font-bold mt-1">{b.note}</div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-400 mt-2">Love Empresa: 1 beneficio gratuito (Impulsa 1 a Crece 20) · Negocio nueva capta: 100% x3m, después 50%</p>
+          </Card>
+        </div>
+      );
+    }
+
+    function ResumenTarifas() {
+      return (
+        <div className="space-y-3 fade-in">
+          <Card title="📋 Portfolio Negocio" defaultOpen={true}>
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead><tr className="bg-orange-100"><th className="p-2.5 text-left rounded-tl-lg">Tarifa</th><th className="p-2.5 text-right">Precio</th><th className="p-2.5 text-center">Fibra</th><th className="p-2.5 text-center">Líneas</th><th className="p-2.5 text-center rounded-tr-lg">LLAA</th></tr></thead>
+                <tbody>
+                  {[["Negocio Base","42€","600Mb","1 (100GB)","+15€"],["Negocio Base Plus","52€","1Gb","1 ∞GB","+15€"],["NE 1 Línea","63€","1Gb","1 ∞GB","+15€"],["NE 3 Líneas","91€","1Gb","3 ∞GB","+13€"],["NE 5 Líneas","122€","1Gb","5 ∞GB","+13€"],["NE 10 Líneas","238€","2Gb","10 ∞GB","+11€"],["NE 20 Líneas","378€","2Gb","20 ∞GB","+11€"]].map(([t,p,f,l,ll],i) => (
+                    <tr key={i} className="border-b border-gray-100 hover:bg-gray-50"><td className="p-2.5 font-semibold">{t}</td><td className="p-2.5 text-right font-bold text-orange-600">{p}</td><td className="p-2.5 text-center">{f}</td><td className="p-2.5 text-center">{l}</td><td className="p-2.5 text-center">{ll}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="mt-2 p-2.5 bg-gray-50 rounded-lg text-xs">
+                <strong>Incluidos:</strong> Cloud ilimitado · Protección dispositivos · Ciberprotección · Legálitas · Atención Personalizada · 200min internac. (NE10/20)
+              </div>
+            </div>
+          </Card>
+
+          <Card title="❤️ Portfolio Love Empresa">
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead><tr className="bg-orange-100"><th className="p-2.5 text-left rounded-tl-lg">Tarifa</th><th className="p-2.5 text-right">Precio</th><th className="p-2.5 text-center">Fibra</th><th className="p-2.5 text-center">Líneas</th><th className="p-2.5 text-center rounded-tr-lg">LLAA</th></tr></thead>
+                <tbody>
+                  {[["LE Activa","54€","1Gb","1 ∞GB","15€"],["LE Impulsa 1","65€","2Gb","1 ∞GB","15€"],["LE Impulsa 3","94€","2Gb","3 ∞GB","13€"],["LE Crece 5","127€","2Gb","5 ∞GB","13€"],["LE Crece 10","238€","2Gb","10 ∞GB","11€"],["LE Crece 20","378€","2Gb","20 ∞GB","11€"]].map(([t,p,f,l,ll],i) => (
+                    <tr key={i} className="border-b border-gray-100 hover:bg-gray-50"><td className="p-2.5 font-semibold">{t}</td><td className="p-2.5 text-right font-bold text-orange-600">{p}</td><td className="p-2.5 text-center">{f}</td><td className="p-2.5 text-center">{l}</td><td className="p-2.5 text-center">{ll}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="mt-2 p-2.5 bg-gray-50 rounded-lg text-xs">
+                <strong>1 beneficio gratis:</strong> M365 · Presencia Digital · Factura Electrónica · Pack Entretenimiento (con Netflix) · TV 90 canales
+              </div>
+            </div>
+          </Card>
+
+          <Card title="📱 Go Empresa">
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {[["Go Flex","12,4€","120GB flex · 1 línea"],["Go Ilimitada+","24,8€","∞GB · 45GB UE"],["Go Ilimitada 2","58€","∞GB · 200min int · 100GB UE"]].map(([n,p,d],i) => (
+                <div key={i} className="p-3 bg-gray-50 rounded-xl text-center border hover:border-orange-300 transition-colors">
+                  <div className="font-bold text-sm">{n}</div>
+                  <div className="text-orange-600 font-black text-xl mt-1">{p}</div>
+                  <div className="text-xs text-gray-500 mt-1">{d}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card title="💸 Pago de Penalizaciones">
+            <div className="mt-2 space-y-1.5">
+              {[["📞 Fijo (línea portada)","80€"],["📱 Móvil (línea portada + VaP >0€)","80€"],["☎️ Centralita","160€"],["🍺 TV Bares","Sin penalización"]].map(([l,p],i) => (
+                <div key={i} className="flex justify-between items-center p-2.5 bg-gray-50 rounded-lg">
+                  <span className="text-sm">{l}</span>
+                  <span className="font-bold text-sm">{p}</span>
+                </div>
+              ))}
+              <p className="text-xs text-gray-400 mt-1">Todos los orígenes excepto grupo +O. Solo si ≥24 meses desde última petición.</p>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    /* ==================== APP ==================== */
+
+    function App() {
+      const [activeSection, setActiveSection] = useState("prioridades");
+      const navRef = useRef(null);
+
+      const renderSection = () => {
+        const map = { prioridades: Prioridades, netflix: Netflix, tv: TVDeporte, dispositivos: Dispositivos, promos: Promociones, lineas: Lineas, retencion: Retencion, servicios: Servicios, resumen: ResumenTarifas };
+        const Comp = map[activeSection] || Prioridades;
+        return <Comp />;
+      };
+
+      return (
+        <div className="min-h-screen bg-gray-100">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white px-4 py-4 no-print">
+            <div className="max-w-4xl mx-auto flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center font-black text-lg shadow-lg shadow-orange-500/20">O</div>
+                <div>
+                  <h1 className="text-lg font-black tracking-tight">Oferta Táctica Feb'26</h1>
+                  <p className="text-xs text-gray-400">SoHo · Autónomos · 2 feb — 1 mar 2026</p>
+                </div>
+              </div>
+              <span className="text-xs text-orange-300 font-bold bg-orange-950 px-2.5 py-1 rounded-lg border border-orange-800">v6</span>
+            </div>
+          </div>
+
+          {/* Nav */}
+          <div className="bg-white border-b shadow-sm sticky top-0 z-10 no-print">
+            <div className="max-w-4xl mx-auto overflow-x-auto nav-scroll" ref={navRef}>
+              <div className="flex gap-1.5 px-3 py-2.5 min-w-max">
+                {sections.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => { setActiveSection(s.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                      activeSection === s.id
+                        ? "bg-orange-500 text-white shadow-md shadow-orange-200"
+                        : "bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700"
+                    }`}
+                  >
+                    <span className="mr-1">{s.icon}</span>{s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="max-w-4xl mx-auto px-4 py-5">
+            {renderSection()}
+          </div>
+
+          {/* Footer */}
+          <div className="bg-gray-800 text-gray-500 text-center py-4 text-xs mt-10 no-print">
+            <p>Orange Restricted · Oferta Táctica Empresas Febrero 2026</p>
+            <p className="text-gray-600 mt-1">Uso interno — No distribuir fuera de la organización</p>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+</body>
+</html>
